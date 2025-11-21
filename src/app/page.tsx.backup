@@ -1,0 +1,477 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { api } from "~/trpc/react";
+import Navigation from "~/app/_components/Navigation";
+import { useTheme } from "~/app/_components/theme-context";
+
+export default function HomePage() {
+  const { theme } = useTheme();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<
+    Array<{
+      id: number;
+      name: string;
+      date: Date;
+      location: string;
+      type: string;
+      distance: string;
+      isVirtual?: boolean;
+      imageUrl?: string | null;
+    }>
+  >([]);
+  const [isSearching, setIsSearching] = useState(false);
+
+  const quickSearch = api.events.getAll.useQuery(
+    searchQuery ? { city: searchQuery } : undefined,
+    {
+      enabled: false, // Don't auto-run, only run on search
+    },
+  );
+
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) {
+      setSearchResults([]);
+      return;
+    }
+
+    setIsSearching(true);
+    try {
+      const results = await quickSearch.refetch();
+      setSearchResults(results.data ?? []);
+    } catch (error) {
+      console.error("Search error:", error);
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      void handleSearch();
+    }
+  };
+
+  return (
+    <div>
+      {/* Navigation Bar */}
+      <Navigation />
+
+      {/* Hero Section with Search */}
+      <div className={`hero min-h-screen ${theme.gradient}`}>
+        <div className="hero-content text-center">
+          <div className="max-w-4xl">
+            <div className="mb-4 text-6xl">{theme.emoji}</div>
+            <h1
+              className={`text-4xl font-extrabold sm:text-5xl md:text-6xl ${theme.text.primary}`}
+            >
+              North Georgia Running Events
+            </h1>
+            <p
+              className={`mx-auto mt-3 max-w-md text-xl sm:text-lg md:mt-5 md:max-w-3xl md:text-xl ${theme.text.secondary}`}
+            >
+              Discover amazing running events across North Georgia. From 5Ks to
+              marathons, find your next challenge in beautiful{" "}
+              {theme.name.toLowerCase()}
+              landscapes of North Georgia.
+            </p>
+
+            {/* Quick Search Bar */}
+            <div className="mx-auto mb-12 max-w-2xl">
+              <div
+                className={`rounded-lg ${theme.background.primary} p-2 ${theme.shadow}`}
+              >
+                <div className="flex">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    placeholder="Search by city name (e.g., Atlanta, Decatur, Tucker)..."
+                    className={`flex-1 rounded-l-md px-4 py-3 ${theme.text.primary} focus:outline-none focus:ring-2 focus:ring-orange-500 ${theme.background.card}`}
+                  />
+                  <button
+                    onClick={() => void handleSearch()}
+                    disabled={isSearching}
+                    className={`rounded-r-md ${theme.primary} px-6 py-3 font-medium text-white transition-all duration-200 hover:${theme.primaryHover} disabled:bg-gray-400`}
+                  >
+                    {isSearching ? "Searching..." : "Search Events"}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Stats */}
+            <div className="mb-12 grid grid-cols-1 gap-6 md:grid-cols-3">
+              <div
+                className={`rounded-lg ${theme.background.primary} p-6 ${theme.shadow} backdrop-blur`}
+              >
+                <div className={`mb-2 text-3xl font-bold ${theme.accent}`}>
+                  19+
+                </div>
+                <div className={theme.text.secondary}>Active Events</div>
+              </div>
+              <div
+                className={`rounded-lg ${theme.background.primary} p-6 ${theme.shadow} backdrop-blur`}
+              >
+                <div className={`mb-2 text-3xl font-bold ${theme.accent}`}>
+                  25+
+                </div>
+                <div className={theme.text.secondary}>North GA Cities</div>
+              </div>
+              <div
+                className={`rounded-lg ${theme.background.primary} p-6 ${theme.shadow} backdrop-blur`}
+              >
+                <div className={`mb-2 text-3xl font-bold ${theme.accent}`}>
+                  5K-26.2
+                </div>
+                <div className={theme.text.secondary}>Event Distances</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Search Results */}
+      {searchResults.length > 0 && (
+        <div className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
+          <h2 className={`mb-6 text-2xl font-bold ${theme.text.primary}`}>
+            Search Results ({searchResults.length} events found)
+          </h2>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {searchResults.map((event) => (
+              <div
+                key={event.id}
+                className={`rounded-lg ${theme.background.primary} shadow-md transition-shadow hover:shadow-lg`}
+              >
+                <div className="flex h-48 w-full items-center justify-center overflow-hidden rounded-t-lg bg-gray-200">
+                  {event.imageUrl ? (
+                    <img
+                      src={event.imageUrl}
+                      alt={event.name}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-4xl">🏃‍♂️</span>
+                  )}
+                </div>
+
+                <div className="p-6">
+                  <div className="mb-2 flex items-start justify-between">
+                    <h3
+                      className={`line-clamp-2 text-lg font-semibold ${theme.text.primary}`}
+                    >
+                      {event.name}
+                    </h3>
+                    {event.isVirtual && (
+                      <span className="rounded-full bg-purple-100 px-2 py-1 text-xs text-purple-800">
+                        Virtual
+                      </span>
+                    )}
+                  </div>
+
+                  <div
+                    className={`mb-4 space-y-2 text-sm ${theme.text.secondary}`}
+                  >
+                    <div className="flex items-center">
+                      <svg
+                        className="mr-2 h-4 w-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
+                      {new Date(event.date).toLocaleDateString()}
+                    </div>
+
+                    <div className="flex items-center">
+                      <svg
+                        className="mr-2 h-4 w-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
+                      </svg>
+                      {event.location}
+                    </div>
+
+                    <div className="flex items-center">
+                      <svg
+                        className="mr-2 h-4 w-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M13 10V3L4 14h7v7l9-11h-7z"
+                        />
+                      </svg>
+                      {event.type} • {event.distance}
+                    </div>
+                  </div>
+
+                  <div className="flex space-x-2">
+                    <Link
+                      href="/events"
+                      className={`flex-1 rounded-md ${theme.primary} px-3 py-2 text-center text-sm text-white transition-all duration-200 hover:${theme.primaryHover}`}
+                    >
+                      View All Events
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+       )}
+                  </div>
+
+                  <div
+                    className={`mb-4 space-y-2 text-sm ${theme.text.secondary}`}
+                  >
+                    <div className="flex items-center">
+                      <svg
+                        className="mr-2 h-4 w-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
+                      {new Date(event.date).toLocaleDateString()}
+                    </div>
+
+                    <div className="flex items-center">
+                      <svg
+                        className="mr-2 h-4 w-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
+                      </svg>
+                      {event.location}
+                    </div>
+
+                    <div className="flex items-center">
+                      <svg
+                        className="mr-2 h-4 w-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M13 10V3L4 14h7v7l9-11h-7z"
+                        />
+                      </svg>
+                      {event.type} • {event.distance}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Features Section */}
+      <div className="bg-white/50 backdrop-blur">
+        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className={`text-3xl font-bold ${theme.text.primary}`}>
+              Why Choose North Georgia Running?
+            </h2>
+            <p className={`mt-4 text-lg ${theme.text.secondary}`}>
+              Discover the best running experiences in the region
+            </p>
+          </div>
+
+          <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+            <div className="text-center">
+              <div
+                className={`mx-auto flex h-12 w-12 items-center justify-center rounded-lg ${theme.secondary}`}
+              >
+                <svg
+                  className="h-6 w-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </div>
+              <h3 className={`mt-4 text-lg font-medium ${theme.text.primary}`}>
+                Easy Search
+              </h3>
+              <p className={`mt-2 text-sm ${theme.text.secondary}`}>
+                Find events by city, date, or event type with our powerful
+                search
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div
+                className={`mx-auto flex h-12 w-12 items-center justify-center rounded-lg ${theme.secondary}`}
+              >
+                <svg
+                  className="h-6 w-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                  />
+                </svg>
+              </div>
+              <h3 className={`mt-4 text-lg font-medium ${theme.text.primary}`}>
+                Live Data
+              </h3>
+              <p className={`mt-2 text-sm ${theme.text.secondary}`}>
+                Up-to-date event information with real-time updates
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div
+                className={`mx-auto flex h-12 w-12 items-center justify-center rounded-lg ${theme.secondary}`}
+              >
+                <svg
+                  className="h-6 w-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                </svg>
+              </div>
+              <h3 className={`mt-4 text-lg font-medium ${theme.text.primary}`}>
+                Local Focus
+              </h3>
+              <p className={`mt-2 text-sm ${theme.text.secondary}`}>
+                Specialized in North Georgia running events and communities
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div
+                className={`mx-auto flex h-12 w-12 items-center justify-center rounded-lg ${theme.secondary}`}
+              >
+                <svg
+                  className="h-6 w-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 10V3L4 14h7v7l9-11h-7z"
+                  />
+                </svg>
+              </div>
+              <h3 className={`mt-4 text-lg font-medium ${theme.text.primary}`}>
+                Quick Registration
+              </h3>
+              <p className={`mt-2 text-sm ${theme.text.secondary}`}>
+                Direct links to event registration pages for easy sign-up
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Call to Action */}
+      <div className="bg-gray-900/10 backdrop-blur">
+        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className={`text-3xl font-bold ${theme.text.primary}`}>
+              Ready to Find Your Next Race?
+            </h2>
+            <p className={`mt-4 text-lg ${theme.text.secondary}`}>
+              Browse all upcoming running events in North Georgia
+            </p>
+            <div className="mt-8 flex justify-center space-x-4">
+              <Link
+                href="/events"
+                className={`rounded-md ${theme.primary} px-8 py-3 font-medium text-white shadow-lg transition-all duration-200 hover:shadow-xl hover:${theme.primaryHover}`}
+              >
+                Browse All Events
+              </Link>
+              <button
+                onClick={() => {
+                  // Import events functionality
+                }}
+                className={`rounded-md border ${theme.border} ${theme.background.primary} px-8 py-3 font-medium ${theme.text.primary} transition-colors hover:${theme.background.secondary}`}
+              >
+                Import Events
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

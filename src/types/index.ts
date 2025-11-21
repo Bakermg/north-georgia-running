@@ -1,0 +1,21 @@
+export type Event = {
+  id: number;
+  name: string;
+  date: Date;
+  location: string;
+  city: string;
+  state: string;
+  type: string;
+  distance: string;
+  description: string | null;
+  registrationLink: string | null;
+  websiteUrl: string | null;
+  imageUrl: string | null;
+  price: number | null;
+  isVirtual: boolean;
+  source: string | null;
+  sourceId: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  isRegistered?: boolean;
+};

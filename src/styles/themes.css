@@ -1,0 +1,118 @@
+/* Fall Theme - Using your exact color palette */
+.fall-theme {
+  --theme-primary: #71250e;
+  --theme-primary-hover: #cc5221;
+  --theme-accent: #eb781b;
+  --theme-secondary: #6f6534;
+  --theme-text-primary: #365365;
+  --theme-text-secondary: #71250e;
+  --theme-text-muted: #6f6534;
+  --theme-bg-primary: rgba(235, 120, 27, 0.1);
+  --theme-bg-secondary: rgba(204, 82, 33, 0.1);
+  --theme-bg-card: rgba(235, 120, 27, 0.05);
+  --theme-bg-hover: rgba(204, 82, 33, 0.1);
+  --theme-border: rgba(111, 101, 52, 0.3);
+  --theme-shadow: rgba(113, 37, 14, 0.2);
+}
+
+/* Winter Theme - Using darker versions of your palette */
+.winter-theme {
+  --theme-primary: #365365;
+  --theme-primary-hover: #71250e;
+  --theme-accent: #eb781b;
+  --theme-secondary: #6f6534;
+  --theme-text-primary: #365365;
+  --theme-text-secondary: #71250e;
+  --theme-text-muted: #6f6534;
+  --theme-bg-primary: rgba(255, 255, 255, 0.9);
+  --theme-bg-secondary: rgba(111, 101, 52, 0.05);
+  --theme-bg-card: rgba(255, 255, 255, 0.8);
+  --theme-border: rgba(111, 101, 52, 0.3);
+}
+
+/* Spring Theme - Using your palette with spring feel */
+.spring-theme {
+  --theme-primary: #6f6534;
+  --theme-primary-hover: #71250e;
+  --theme-accent: #eb781b;
+  --theme-secondary: #365365;
+  --theme-text-primary: #365365;
+  --theme-text-secondary: #6f6534;
+  --theme-text-muted: #71250e;
+  --theme-bg-primary: rgba(255, 255, 255, 0.9);
+  --theme-bg-secondary: rgba(54, 83, 101, 0.05);
+  --theme-bg-card: rgba(255, 255, 255, 0.8);
+  --theme-border: rgba(54, 83, 101, 0.3);
+}
+
+/* Summer Theme - Using your warm palette */
+.summer-theme {
+  --theme-primary: #cc5221;
+  --theme-primary-hover: #eb781b;
+  --theme-accent: #eb781b;
+  --theme-secondary: #71250e;
+  --theme-text-primary: #71250e;
+  --theme-text-secondary: #cc5221;
+  --theme-text-muted: #6f6534;
+  --theme-bg-primary: rgba(255, 255, 255, 0.9);
+  --theme-bg-secondary: rgba(113, 37, 14, 0.05);
+  --theme-bg-card: rgba(255, 255, 255, 0.8);
+  --theme-border: rgba(113, 37, 14, 0.3);
+}
+
+/* Base theme classes that use CSS variables */
+.theme-primary {
+  background-color: var(--theme-primary);
+}
+
+.theme-primary-hover:hover {
+  background-color: var(--theme-primary-hover);
+}
+
+.theme-accent {
+  color: var(--theme-accent);
+}
+
+.theme-text-primary {
+  color: var(--theme-text-primary);
+}
+
+.theme-text-secondary {
+  color: var(--theme-text-secondary);
+}
+
+.theme-text-muted {
+  color: var(--theme-text-muted);
+}
+
+.theme-bg-primary {
+  background-color: var(--theme-bg-primary);
+}
+
+.theme-bg-secondary {
+  background-color: var(--theme-bg-secondary);
+}
+
+.theme-bg-card {
+  background-color: var(--theme-bg-card);
+}
+
+.theme-bg-hover:hover {
+  background-color: var(--theme-bg-hover);
+}
+
+.theme-border {
+  border-color: var(--theme-border);
+}
+
+.theme-shadow {
+  box-shadow: 0 10px 15px -3px var(--theme-shadow);
+}
+
+.theme-gradient {
+  background: linear-gradient(
+    135deg,
+    var(--theme-bg-primary) 0%,
+    var(--theme-bg-secondary) 100%
+  );
+}
