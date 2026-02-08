@@ -56,7 +56,6 @@ export default function HomePage() {
               {/* Active Events - Large Featured Card */}
               <FeatureCard
                 gridClass="md:col-span-8"
-                gradientColor="accent"
                 label="Featured"
                 value={eventCount}
                 title="Active Events"
@@ -66,7 +65,6 @@ export default function HomePage() {
               {/* Cities Card - Tall */}
               <FeatureCard
                 gridClass="md:col-span-4 md:row-span-2"
-                gradientColor="primary"
                 title="25+ Cities"
                 description="Events across the diverse landscapes of North Georgia, from mountain towns to lakeside communities"
                 icon={
@@ -99,7 +97,6 @@ export default function HomePage() {
               {/* All Distances Card - Wide */}
               <FeatureCard
                 gridClass="md:col-span-5"
-                gradientColor="secondary"
                 title="All Distances"
                 description="From fun 5K runs to challenging marathons, find events that match your fitness level and goals"
                 icon={
@@ -138,7 +135,6 @@ export default function HomePage() {
               {/* Live Updates Card */}
               <FeatureCard
                 gridClass="md:col-span-3"
-                gradientColor="tertiary"
                 title="Live Updates"
                 description="Real-time event information with up-to-date registration links and event details"
                 icon={
