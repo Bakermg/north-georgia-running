@@ -9,7 +9,7 @@ import { Card, CardContent, Stack, Heading, Text, Paragraph } from "~/app/_compo
 
 interface FeatureCardProps {
   gridClass?: string;
-  gradientColor?: "accent" | "primary" | "secondary" | "tertiary";
+  gradientColor?: "accent" | "primary" | "secondary" | "tertiary" | "random";
   label?: string;
   value?: string | number;
   title: string;
@@ -30,7 +30,7 @@ export const FeatureCard = React.forwardRef<HTMLDivElement, FeatureCardProps>(
   (
     {
       gridClass = "",
-      gradientColor = "accent",
+      gradientColor = "random",
       label,
       value,
       title,
@@ -41,6 +41,18 @@ export const FeatureCard = React.forwardRef<HTMLDivElement, FeatureCardProps>(
     },
     ref
   ) => {
+    // Get random color if "random" is specified
+    const colorOptions: Array<"accent" | "primary" | "secondary" | "tertiary"> = [
+      "accent",
+      "primary",
+      "secondary",
+      "tertiary",
+    ];
+    const selectedColor: "accent" | "primary" | "secondary" | "tertiary" =
+      gradientColor === "random"
+        ? colorOptions[Math.floor(Math.random() * colorOptions.length)]
+        : (gradientColor as "accent" | "primary" | "secondary" | "tertiary");
+
     const isLargeValue = value !== undefined && value !== null;
     const hasIcon = icon !== undefined;
 
@@ -50,7 +62,7 @@ export const FeatureCard = React.forwardRef<HTMLDivElement, FeatureCardProps>(
         interactive
         className={gridClass}
         style={{
-          background: `${gradientMap[gradientColor]} !important`,
+          background: `${gradientMap[selectedColor]} !important`,
         }}
       >
         <CardContent className="py-8 md:py-12 rounded-t-lg rounded-b-lg bg-transparent">
