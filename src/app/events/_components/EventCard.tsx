@@ -1,24 +1,20 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { api } from "~/trpc/react";
+import type { Event } from "~/types";
 import {
   Card,
   CardContent,
-  CardMedia,
-  CardActions,
+  CardFooter,
+  Stack,
+  Flex,
+  Heading,
+  Text,
   Button,
-  Box,
-  Typography,
-  IconButton,
-  Tooltip,
-} from "@mui/material";
-import {
-  BookmarkBorder as BookmarkBorderIcon,
-  Bookmark as BookmarkIcon,
-} from "@mui/icons-material";
-import { useRouter } from "next/navigation";
-import { api } from "~/trpc/react";
-import type { Event } from "~/types";
-import { useSession } from "next-auth/react";
+  Badge,
+} from "~/app/_components/primitives";
 
 interface EventCardProps {
   event: Event;
@@ -26,7 +22,7 @@ interface EventCardProps {
   onToggle: () => void;
 }
 
-// Helper function to format dates consistently
+// Helper function to format dates
 function formatEventDate(dateString: string | Date): string {
   const date = typeof dateString === "string" ? new Date(dateString) : dateString;
   const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -51,212 +47,107 @@ export default function EventCard({ event, isRegistered, onToggle }: EventCardPr
   const handleToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!session) {
-      // Redirect to login or show message? For now, just do nothing or maybe alert
-      // ideally we should open the login modal or redirect
       return;
     }
     toggleMutation.mutate({ eventId: event.id });
   };
 
-  // Helper function to get category color
-  const getCategoryColor = (type: string) => {
-    const colors: Record<string, string> = {
-      "5K": "#e3d5ca",
-      "10K": "#d9e8f5",
-      "Half Marathon": "#f5e6d3",
-      Marathon: "#fadadd",
-      "Trail Run": "#c8e6c9",
-      "Ultra Marathon": "#e1bee7",
-      Virtual: "#b3e5fc",
-      "Running Event": "#ffecb3",
-    };
-    return colors[type] ?? "#e0e0e0";
-  };
-
   return (
-    <Box
+    <div
       onClick={() => router.push(`/events/${event.id}`)}
-      sx={{
-        color: "inherit",
-        cursor: "pointer",
-        breakInside: "avoid",
-        marginBottom: 3,
-        display: "inline-block",
-        width: "100%",
-        "&:hover .event-card": {
-          transform: "translateY(-4px)",
-          boxShadow: 6,
-        },
-        "&:hover .event-title": {
-          color: "primary.main",
-        },
-      }}
+      className="cursor-pointer"
     >
-      <Card
-        className="event-card"
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          position: "relative",
-          transition: "all 0.3s ease",
-          bgcolor: getCategoryColor(event.type),
-        }}
-      >
+      <Card interactive>
         {/* Image Section */}
-        <CardMedia
-          component="div"
-          sx={{
-            height: 240,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            bgcolor: "rgba(255, 255, 255, 0.5)",
-            overflow: "hidden",
-            position: "relative",
-          }}
-        >
+        <div className="h-48 w-full bg-gradient-to-br from-primary/10 to-accent/10 overflow-hidden flex items-center justify-center relative group">
           {event.imageUrl ? (
-            <Box
-              component="img"
+            <img
               src={event.imageUrl}
               alt={event.name}
-              sx={{
-                height: "100%",
-                width: "100%",
-                objectFit: "cover",
-              }}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
           ) : (
-            <Typography variant="h1" sx={{ fontSize: "4rem" }}>
-              🏃‍♂️
-            </Typography>
+            <span className="text-5xl">🏃</span>
           )}
-          
+
           {/* Save Button Overlay */}
           {session && (
-            <Box
-              sx={{
-                position: "absolute",
-                top: 8,
-                right: 8,
-                zIndex: 10,
-              }}
+            <button
+              onClick={handleToggle}
+              className="absolute top-2 right-2 bg-white/80 hover:bg-white rounded-lg p-2 transition-all z-10"
+              title={isRegistered ? "Remove from my events" : "Save event"}
             >
-              <Tooltip title={isRegistered ? "Remove from my events" : "Save event"}>
-                <IconButton
-                  onClick={handleToggle}
-                  sx={{
-                    bgcolor: "rgba(255, 255, 255, 0.8)",
-                    "&:hover": {
-                      bgcolor: "rgba(255, 255, 255, 0.95)",
-                    },
-                  }}
-                >
-                  {isRegistered ? (
-                    <BookmarkIcon color="primary" />
-                  ) : (
-                    <BookmarkBorderIcon />
-                  )}
-                </IconButton>
-              </Tooltip>
-            </Box>
+              {isRegistered ? "❤️" : "🤍"}
+            </button>
           )}
-        </CardMedia>
+        </div>
 
         {/* Content Section */}
-        <CardContent sx={{ p: 3 }}>
-          {/* Category Tag */}
-          <Box
-            sx={{
-              display: "inline-block",
-              px: 1.5,
-              py: 0.5,
-              mb: 2,
-              bgcolor: "rgba(0, 0, 0, 0.08)",
-              borderRadius: 1,
-              fontWeight: 600,
-              textTransform: "uppercase",
-              letterSpacing: 0.5,
-              fontSize: "0.75rem",
-            }}
-          >
-            {event.type}
-          </Box>
+        <CardContent>
+          <Stack gap="md">
+            {/* Type Badge */}
+            <Badge variant="accent" className="w-fit">
+              {event.type}
+            </Badge>
 
-          {/* Event Title */}
-          <Typography
-            className="event-title"
-            variant="h6"
-            sx={{
-              fontWeight: 700,
-              mb: 2,
-              lineHeight: 1.3,
-              transition: "color 0.3s ease",
-            }}
-          >
-            {event.name}
-          </Typography>
+            {/* Event Title */}
+            <Heading level="h5" className="line-clamp-2 hover:text-primary transition-colors">
+              {event.name}
+            </Heading>
 
-          {/* Date */}
-          <Typography
-            variant="body2"
-            sx={{
-              color: "text.secondary",
-              mb: 2,
-              fontWeight: 500,
-            }}
-          >
-            {formatEventDate(event.date)}
-          </Typography>
+            {/* Date */}
+            <Text size="sm" color="secondary" weight="medium">
+              📅 {formatEventDate(event.date)}
+            </Text>
 
-          {/* Location and Distance */}
-          <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
-            <Typography variant="body2" color="text.secondary">
-              📍 {event.location}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              🏁 {event.distance}
-            </Typography>
-          </Box>
+            {/* Location and Distance */}
+            <Stack gap="sm">
+              <Flex gap="md" className="text-sm">
+                <Text size="sm" color="secondary">
+                  📍 {event.location}
+                </Text>
+              </Flex>
+              <Flex gap="md" className="text-sm">
+                <Text size="sm" color="secondary">
+                  🏁 {event.distance}
+                </Text>
+              </Flex>
+            </Stack>
+          </Stack>
         </CardContent>
 
         {/* Action Buttons */}
-        <CardActions
-          sx={{
-            px: 3,
-            pb: 3,
-            pt: 0,
-            gap: 1,
-            flexWrap: "wrap",
-          }}
-        >
-          {event.registrationLink && (
-            <Button
-              size="small"
-              variant="contained"
-              href={event.registrationLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()}
-              sx={{ flexGrow: 1 }}
-            >
-              Register
-            </Button>
-          )}
-          {event.websiteUrl && (
-            <Button
-              size="small"
-              variant="outlined"
-              href={event.websiteUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()}
-            >
-              Website
-            </Button>
-          )}
-        </CardActions>
+        <CardFooter>
+          <Flex gap="md" className="w-full flex-wrap">
+            {event.registrationLink && (
+              <a
+                href={event.registrationLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="flex-1"
+              >
+                <Button variant="primary" size="sm" className="w-full">
+                  Register
+                </Button>
+              </a>
+            )}
+            {event.websiteUrl && (
+              <a
+                href={event.websiteUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className={event.registrationLink ? "flex-1" : "flex-1"}
+              >
+                <Button variant="outline" size="sm" className="w-full">
+                  Website
+                </Button>
+              </a>
+            )}
+          </Flex>
+        </CardFooter>
       </Card>
-    </Box>
+    </div>
   );
 }

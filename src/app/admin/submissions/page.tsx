@@ -5,42 +5,32 @@ import { api } from "~/trpc/react";
 import Navigation from "~/app/_components/Navigation";
 import Footer from "~/app/_components/Footer";
 import {
-  Box,
   Container,
-  Typography,
+  Section,
+  Stack,
+  Flex,
+  Heading,
+  Paragraph,
+  Text,
+  Button,
   Card,
   CardContent,
-  CardActions,
-  Button,
-  Alert,
-  CircularProgress,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Chip,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-} from "@mui/material";
-import { Delete, CheckCircle } from "@mui/icons-material";
+  Badge,
+  StatusBadge,
+} from "~/app/_components/primitives";
+
+interface DeleteConfirm {
+  id: number;
+  name: string;
+}
 
 export default function AdminSubmissionsPage() {
   const [selectedEvent, setSelectedEvent] = useState<number | null>(null);
-  const [deleteConfirm, setDeleteConfirm] = useState<{
-    id: number;
-    name: string;
-  } | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<DeleteConfirm | null>(null);
 
-  // Fetch pending submissions
   const { data: pendingEvents, isLoading, refetch } =
     api.events.getPendingSubmissions.useQuery();
 
-  // Delete mutation
   const deleteMutation = api.events.deleteSubmission.useMutation({
     onSuccess: () => {
       void refetch();
@@ -48,7 +38,6 @@ export default function AdminSubmissionsPage() {
     },
   });
 
-  // Approve mutation
   const approveMutation = api.events.approveSubmission.useMutation({
     onSuccess: () => {
       void refetch();
@@ -57,184 +46,210 @@ export default function AdminSubmissionsPage() {
 
   if (isLoading) {
     return (
-      <Box
-        sx={{
-          display: "flex",
-          minHeight: "100vh",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <CircularProgress />
-      </Box>
+      <div className="min-h-screen flex items-center justify-center bg-neutral-50">
+        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
     );
   }
 
   const events = pendingEvents ?? [];
 
   return (
-    <Box>
+    <div className="min-h-screen bg-neutral-50 flex flex-col">
       <Navigation />
 
-      <Box
-        sx={{
-          py: { xs: 8, md: 12 },
-          backgroundColor: "background.default",
-          minHeight: "100vh",
-        }}
-      >
-        <Container maxWidth="xl">
-          <Box sx={{ mb: 4 }}>
-            <Typography variant="h3" sx={{ fontWeight: 700, mb: 2 }}>
-              Pending Race Submissions
-            </Typography>
-            <Typography variant="body1" color="text.secondary">
-              Review and manage race submissions from event organizers. Delete
-              invalid races or approve them to make them visible to the public.
-            </Typography>
-          </Box>
+      <Section py="2xl" className="flex-grow">
+        <Container>
+          <Stack gap="xl">
+            {/* Header */}
+            <Stack gap="md">
+              <Heading level="h1" fluid>
+                Pending Race Submissions
+              </Heading>
+              <Paragraph color="secondary">
+                Review and manage race submissions from event organizers. Delete
+                invalid races or approve them to make them visible to the public.
+              </Paragraph>
+            </Stack>
 
-          {events.length === 0 ? (
-            <Alert severity="success">
-              No pending submissions. All races are approved!
-            </Alert>
-          ) : (
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead sx={{ backgroundColor: "#f5f0eb" }}>
-                  <TableRow>
-                    <TableCell sx={{ fontWeight: 700 }}>Race Name</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>Date</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>Location</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>Distance</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>Organizer</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>Website Status</TableCell>
-                    <TableCell align="right" sx={{ fontWeight: 700 }}>
-                      Actions
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {events.map((event) => (
-                    <TableRow key={event.id} hover>
-                      <TableCell>{event.name}</TableCell>
-                      <TableCell>
-                        {new Date(event.date).toLocaleDateString("en-US", {
-                          month: "short",
-                          day: "numeric",
-                          year: "numeric",
-                        })}
-                      </TableCell>
-                      <TableCell>{event.location}</TableCell>
-                      <TableCell>{event.distance}</TableCell>
-                      <TableCell>
-                        <Box sx={{ fontSize: "0.875rem" }}>
-                          <div>{event.organizerName}</div>
-                          <div style={{ opacity: 0.7 }}>
-                            {event.organizerEmail}
-                          </div>
-                        </Box>
-                      </TableCell>
-                      <TableCell>
-                        <Chip
-                          label="Verified"
-                          color="success"
-                          size="small"
-                          variant="outlined"
-                        />
-                      </TableCell>
-                      <TableCell align="right">
-                        <Box
-                          sx={{ display: "flex", gap: 1, justifyContent: "flex-end" }}
-                        >
-                          <Button
-                            size="small"
-                            variant="contained"
-                            startIcon={<CheckCircle />}
-                            onClick={() => approveMutation.mutate({ id: event.id })}
-                            disabled={approveMutation.isPending}
+            {/* Empty State */}
+            {events.length === 0 ? (
+              <div className="bg-success/10 border-l-4 border-success p-4 rounded">
+                <Text color="success" weight="semibold">
+                  ✓ No pending submissions. All races are approved!
+                </Text>
+              </div>
+            ) : (
+              <Card>
+                <CardContent className="p-0">
+                  {/* Table */}
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b border-neutral-200 bg-neutral-100">
+                          <th className="px-6 py-3 text-left text-sm font-semibold text-neutral-900">
+                            Race Name
+                          </th>
+                          <th className="px-6 py-3 text-left text-sm font-semibold text-neutral-900">
+                            Date
+                          </th>
+                          <th className="px-6 py-3 text-left text-sm font-semibold text-neutral-900">
+                            Location
+                          </th>
+                          <th className="px-6 py-3 text-left text-sm font-semibold text-neutral-900">
+                            Distance
+                          </th>
+                          <th className="px-6 py-3 text-left text-sm font-semibold text-neutral-900">
+                            Organizer
+                          </th>
+                          <th className="px-6 py-3 text-right text-sm font-semibold text-neutral-900">
+                            Actions
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {events.map((event, idx) => (
+                          <tr
+                            key={event.id}
+                            className={`border-b border-neutral-200 hover:bg-neutral-50 transition-colors ${
+                              idx % 2 === 0 ? "bg-white" : "bg-neutral-50"
+                            }`}
                           >
-                            Approve
-                          </Button>
-                          <Button
-                            size="small"
-                            variant="outlined"
-                            color="error"
-                            startIcon={<Delete />}
-                            onClick={() =>
-                              setDeleteConfirm({
-                                id: event.id,
-                                name: event.name,
-                              })
-                            }
-                          >
-                            Delete
-                          </Button>
-                        </Box>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          )}
+                            <td className="px-6 py-4 text-sm font-medium text-neutral-900">
+                              {event.name}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-neutral-600">
+                              {new Date(event.date).toLocaleDateString("en-US", {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              })}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-neutral-600">
+                              {event.location}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-neutral-600">
+                              {event.distance}
+                            </td>
+                            <td className="px-6 py-4 text-sm">
+                              <div className="space-y-1">
+                                <div className="text-neutral-900 font-medium">
+                                  {event.organizerName}
+                                </div>
+                                <div className="text-xs text-neutral-500">
+                                  {event.organizerEmail}
+                                </div>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4">
+                              <Flex gap="md" justify="end">
+                                <Button
+                                  variant="primary"
+                                  size="sm"
+                                  onClick={() =>
+                                    approveMutation.mutate({ id: event.id })
+                                  }
+                                  disabled={approveMutation.isPending}
+                                >
+                                  {approveMutation.isPending ? "..." : "✓ Approve"}
+                                </Button>
+                                <Button
+                                  variant="error"
+                                  size="sm"
+                                  onClick={() =>
+                                    setDeleteConfirm({
+                                      id: event.id,
+                                      name: event.name,
+                                    })
+                                  }
+                                >
+                                  Delete
+                                </Button>
+                              </Flex>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
-          {/* Approval Success Alert */}
-          {approveMutation.isSuccess && (
-            <Alert severity="success" sx={{ mt: 2 }}>
-              {approveMutation.data?.message}
-            </Alert>
-          )}
+            {/* Status Messages */}
+            {approveMutation.isSuccess && (
+              <div className="bg-success/10 border-l-4 border-success p-4 rounded">
+                <Text color="success" weight="semibold">
+                  {approveMutation.data?.message}
+                </Text>
+              </div>
+            )}
 
-          {/* Delete Success Alert */}
-          {deleteMutation.isSuccess && (
-            <Alert severity="info" sx={{ mt: 2 }}>
-              {deleteMutation.data?.message}
-            </Alert>
-          )}
+            {deleteMutation.isSuccess && (
+              <div className="bg-info/10 border-l-4 border-info p-4 rounded">
+                <Text color="info" weight="semibold">
+                  {deleteMutation.data?.message}
+                </Text>
+              </div>
+            )}
 
-          {/* Error Alert */}
-          {(approveMutation.isError || deleteMutation.isError) && (
-            <Alert severity="error" sx={{ mt: 2 }}>
-              {approveMutation.error?.message ?? deleteMutation.error?.message}
-            </Alert>
-          )}
+            {(approveMutation.isError || deleteMutation.isError) && (
+              <div className="bg-error/10 border-l-4 border-error p-4 rounded">
+                <Text color="error" weight="semibold">
+                  {approveMutation.error?.message ??
+                    deleteMutation.error?.message}
+                </Text>
+              </div>
+            )}
+          </Stack>
         </Container>
-      </Box>
+      </Section>
 
       {/* Delete Confirmation Dialog */}
-      <Dialog
-        open={!!deleteConfirm}
-        onClose={() => setDeleteConfirm(null)}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle sx={{ fontWeight: 700 }}>Delete Race Submission?</DialogTitle>
-        <DialogContent sx={{ pt: 2 }}>
-          <Typography sx={{ mb: 2 }}>
-            Are you sure you want to delete <strong>{deleteConfirm?.name}</strong>?
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            This action cannot be undone. The race will be permanently removed from
-            the database.
-          </Typography>
-        </DialogContent>
-        <DialogActions sx={{ p: 2, gap: 1 }}>
-          <Button onClick={() => setDeleteConfirm(null)}>Cancel</Button>
-          <Button
-            variant="contained"
-            color="error"
-            onClick={() =>
-              deleteConfirm && deleteMutation.mutate({ id: deleteConfirm.id })
-            }
-            disabled={deleteMutation.isPending}
-          >
-            {deleteMutation.isPending ? "Deleting..." : "Delete"}
-          </Button>
-        </DialogActions>
-      </Dialog>
+      {deleteConfirm && (
+        <div className="fixed inset-0 bg-neutral-900/50 flex items-center justify-center z-50">
+          <Card className="w-full max-w-md">
+            <CardContent>
+              <Stack gap="lg">
+                <Stack gap="md">
+                  <Heading level="h4">Delete Race Submission?</Heading>
+                  <Stack gap="md">
+                    <Paragraph color="secondary">
+                      Are you sure you want to delete{" "}
+                      <strong>{deleteConfirm.name}</strong>?
+                    </Paragraph>
+                    <Text size="sm" color="muted">
+                      This action cannot be undone. The race will be permanently
+                      removed from the database.
+                    </Text>
+                  </Stack>
+                </Stack>
+
+                <Flex gap="md" justify="end">
+                  <Button
+                    variant="outline"
+                    onClick={() => setDeleteConfirm(null)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    variant="primary"
+                    onClick={() =>
+                      deleteConfirm &&
+                      deleteMutation.mutate({ id: deleteConfirm.id })
+                    }
+                    disabled={deleteMutation.isPending}
+                  >
+                    {deleteMutation.isPending ? "Deleting..." : "Delete"}
+                  </Button>
+                </Flex>
+              </Stack>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       <Footer />
-    </Box>
+    </div>
   );
 }
