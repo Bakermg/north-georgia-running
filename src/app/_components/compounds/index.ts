@@ -17,6 +17,7 @@ export { CTASection } from "./CTASection";
 // Data Display Components
 export { StatCard } from "./StatCard";
 export { UserCard } from "./UserCard";
+export { FeatureCard } from "./FeatureCard";
 
 // State Components
 export { EmptyState } from "./EmptyState";
