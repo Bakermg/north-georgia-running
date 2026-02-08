@@ -61,7 +61,7 @@ export default function HomePage() {
                 interactive
                 className="md:col-span-8 bg-gradient-to-br from-neutral-100 to-neutral-50"
               >
-                <CardContent className="py-8 md:py-12 rounded-t-lg">
+                <CardContent className="py-8 md:py-12 rounded-t-lg rounded-b-lg">
                   <Stack gap="md">
                     <Text size="xs" color="muted" weight="semibold">
                       FEATURED
@@ -82,7 +82,7 @@ export default function HomePage() {
                 interactive
                 className="md:col-span-4 md:row-span-2 bg-gradient-to-br from-neutral-100 to-neutral-50"
               >
-                <CardContent className="py-8 text-center rounded-t-lg">
+                <CardContent className="py-8 text-center rounded-t-lg rounded-b-lg">
                   <Stack gap="lg" className="items-center">
                     <div className="w-20 h-20 mx-auto bg-neutral-200 rounded-lg flex items-center justify-center">
                       <svg
@@ -163,7 +163,7 @@ export default function HomePage() {
                 interactive
                 className="md:col-span-5 bg-gradient-to-br from-neutral-100 to-neutral-50"
               >
-                <CardContent className="py-8 rounded-t-lg">
+                <CardContent className="py-8 rounded-t-lg rounded-b-lg">
                   <Stack gap="lg">
                     <div className="w-16 h-16 bg-neutral-200 rounded-lg flex items-center justify-center">
                       <svg
@@ -210,7 +210,7 @@ export default function HomePage() {
                 interactive
                 className="md:col-span-3 bg-gradient-to-br from-neutral-100 to-neutral-50"
               >
-                <CardContent className="py-8 rounded-t-lg">
+                <CardContent className="py-8 rounded-t-lg rounded-b-lg">
                   <Stack gap="lg">
                     <div className="w-16 h-16 bg-neutral-200 rounded-lg flex items-center justify-center">
                       <svg
