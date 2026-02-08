@@ -60,7 +60,7 @@ export default function HomePage() {
               <Card
                 interactive
                 className="md:col-span-8"
-                style={{ background: "linear-gradient(to bottom right, rgba(245, 173, 114, 0.3), rgb(250, 248, 246))" }}
+                style={{ background: "linear-gradient(to bottom right, rgba(245, 173, 114, 0.3), rgb(250, 248, 246)) !important" }}
               >
                 <CardContent className="py-8 md:py-12 rounded-t-lg rounded-b-lg">
                   <Stack gap="md">
@@ -82,7 +82,7 @@ export default function HomePage() {
               <Card
                 interactive
                 className="md:col-span-4 md:row-span-2"
-                style={{ background: "linear-gradient(to bottom right, rgba(217, 119, 87, 0.3), rgb(250, 248, 246))" }}
+                style={{ background: "linear-gradient(to bottom right, rgba(217, 119, 87, 0.3), rgb(250, 248, 246)) !important" }}
               >
                 <CardContent className="py-8 text-center rounded-t-lg rounded-b-lg">
                   <Stack gap="lg" className="items-center">
@@ -164,7 +164,7 @@ export default function HomePage() {
               <Card
                 interactive
                 className="md:col-span-5"
-                style={{ background: "linear-gradient(to bottom right, rgba(155, 149, 144, 0.3), rgb(250, 248, 246))" }}
+                style={{ background: "linear-gradient(to bottom right, rgba(155, 149, 144, 0.3), rgb(250, 248, 246)) !important" }}
               >
                 <CardContent className="py-8 rounded-t-lg rounded-b-lg">
                   <Stack gap="lg">
@@ -212,7 +212,7 @@ export default function HomePage() {
               <Card
                 interactive
                 className="md:col-span-3"
-                style={{ background: "linear-gradient(to bottom right, rgba(181, 173, 130, 0.3), rgb(250, 248, 246))" }}
+                style={{ background: "linear-gradient(to bottom right, rgba(181, 173, 130, 0.3), rgb(250, 248, 246)) !important" }}
               >
                 <CardContent className="py-8 rounded-t-lg rounded-b-lg">
                   <Stack gap="lg">
