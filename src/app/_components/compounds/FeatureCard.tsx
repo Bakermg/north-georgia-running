@@ -4,7 +4,9 @@
  * Used for showcasing key metrics or features in mosaic layouts
  */
 
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, Stack, Heading, Text, Paragraph } from "~/app/_components/primitives";
 
 interface FeatureCardProps {
@@ -41,17 +43,27 @@ export const FeatureCard = React.forwardRef<HTMLDivElement, FeatureCardProps>(
     },
     ref
   ) => {
-    // Get random color if "random" is specified
     const colorOptions: Array<"accent" | "primary" | "secondary" | "tertiary"> = [
       "accent",
       "primary",
       "secondary",
       "tertiary",
     ];
-    const selectedColor: "accent" | "primary" | "secondary" | "tertiary" =
-      gradientColor === "random" || !gradientColor
-        ? colorOptions[Math.floor(Math.random() * colorOptions.length)]!
-        : (gradientColor as "accent" | "primary" | "secondary" | "tertiary");
+
+    // Use state for random color to avoid hydration mismatch
+    const [selectedColor, setSelectedColor] = useState<"accent" | "primary" | "secondary" | "tertiary">(
+      "accent"
+    );
+
+    // Set random color after hydration
+    useEffect(() => {
+      if (gradientColor === "random" || !gradientColor) {
+        const randomColor = colorOptions[Math.floor(Math.random() * colorOptions.length)]!;
+        setSelectedColor(randomColor);
+      } else {
+        setSelectedColor(gradientColor as "accent" | "primary" | "secondary" | "tertiary");
+      }
+    }, [gradientColor]);
 
     const isLargeValue = value !== undefined && value !== null;
     const hasIcon = icon !== undefined;
