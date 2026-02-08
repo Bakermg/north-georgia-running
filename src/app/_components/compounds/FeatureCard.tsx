@@ -62,7 +62,7 @@ export const FeatureCard = React.forwardRef<HTMLDivElement, FeatureCardProps>(
         interactive
         className={gridClass}
         style={{
-          background: `${gradientMap[selectedColor]} !important`,
+          background: gradientMap[selectedColor],
         }}
       >
         <CardContent className="py-8 md:py-12 rounded-t-lg rounded-b-lg bg-transparent">
