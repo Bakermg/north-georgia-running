@@ -26,6 +26,8 @@ export const eventRouter = createTRPCRouter({
         OR: [
           { isApproved: true }, // Show approved manual submissions
           { source: "runsignup" }, // Show all RunSignUp events (auto-approved)
+          { source: "atlanta_track_club" }, // Show Atlanta Track Club events
+          { source: "active_com" }, // Show Active.com events
         ],
       };
 
@@ -117,6 +119,8 @@ export const eventRouter = createTRPCRouter({
         OR: [
           { isApproved: true }, // Show approved manual submissions
           { source: "runsignup" }, // Show all RunSignUp events (auto-approved)
+          { source: "atlanta_track_club" }, // Show Atlanta Track Club events
+          { source: "active_com" }, // Show Active.com events
         ],
       };
 
@@ -185,8 +189,9 @@ export const eventRouter = createTRPCRouter({
       }
 
       // Only show approved events to regular users
-      // Allow: approved manual submissions OR all RunSignUp events
-      if (!event.isApproved && event.source !== "runsignup") {
+      // Allow: approved manual submissions OR all trusted source events
+      const trustedSources = ["runsignup", "atlanta_track_club", "active_com"];
+      if (!event.isApproved && !trustedSources.includes(event.source ?? "")) {
         throw new Error("This event is not yet available");
       }
 
@@ -197,6 +202,20 @@ export const eventRouter = createTRPCRouter({
     const eventDataService = new EventDataService();
     const result = await eventDataService.importEventsToDatabase();
     return result;
+  }),
+
+  // Import events from all configured sources
+  importAllEvents: publicProcedure.mutation(async () => {
+    const eventDataService = new EventDataService();
+    const result = await eventDataService.importAllEvents();
+    return result;
+  }),
+
+  // Get event statistics by source
+  getStats: publicProcedure.query(async () => {
+    const eventDataService = new EventDataService();
+    const stats = await eventDataService.getEventStats();
+    return stats;
   }),
 
   submitEvent: publicProcedure

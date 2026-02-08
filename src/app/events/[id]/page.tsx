@@ -1,11 +1,26 @@
 "use client";
 
 import { useParams } from "next/navigation";
+import Link from "next/link";
 import { api } from "~/trpc/react";
 import Navigation from "~/app/_components/Navigation";
 import EventsBanner from "~/app/events/_components/EventsBanner";
+import {
+  Container,
+  Section,
+  Stack,
+  Flex,
+  Heading,
+  Paragraph,
+  Text,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Badge,
+} from "~/app/_components/primitives";
 
-// Helper functions to format dates consistently (avoiding hydration issues)
+// Helper functions to format dates
 function formatEventDate(dateString: string | Date): string {
   const date = typeof dateString === "string" ? new Date(dateString) : dateString;
   const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -28,27 +43,6 @@ function formatEventTime(dateString: string | Date): string {
 
   return `${displayHours}:${minutes} ${ampm} UTC`;
 }
-import {
-  Box,
-  Typography,
-  Card,
-  CardContent,
-  CardMedia,
-  Button,
-  Chip,
-  Container,
-  CircularProgress,
-  Alert,
-} from "@mui/material";
-import {
-  DateRange,
-  LocationOn,
-  Bolt,
-  AttachMoney,
-  Public,
-  CalendarToday,
-} from "@mui/icons-material";
-import Link from "next/link";
 
 export default function EventDetailPage() {
   const params = useParams();
@@ -60,233 +54,213 @@ export default function EventDetailPage() {
     error,
   } = api.events.getById.useQuery(
     { id: eventId },
-    { enabled: !isNaN(eventId) },
+    { enabled: !isNaN(eventId) }
   );
 
   if (isLoading) {
     return (
-      <Box
-        sx={{
-          display: "flex",
-          minHeight: "100vh",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <CircularProgress size={60} />
-      </Box>
+      <div className="min-h-screen flex items-center justify-center bg-neutral-50">
+        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
     );
   }
 
   if (error || !event) {
     return (
-      <Box sx={{ minHeight: "100vh", backgroundColor: "background.default" }}>
+      <div className="min-h-screen bg-neutral-50">
         <Navigation />
         <EventsBanner />
-        <Container maxWidth="lg" sx={{ py: 4 }}>
-          <Alert severity="error" sx={{ mb: 2 }}>
-            {error?.message ?? "Event not found"}
-          </Alert>
-          <Button component={Link} href="/events" variant="contained">
-            Back to Events
-          </Button>
-        </Container>
-      </Box>
+        <Section>
+          <Container>
+            <Stack gap="lg">
+              <div className="bg-error/10 border-l-4 border-error p-4 rounded">
+                <Text color="error" weight="semibold">
+                  {error?.message ?? "Event not found"}
+                </Text>
+              </div>
+              <Link href="/events">
+                <Button variant="outline">← Back to Events</Button>
+              </Link>
+            </Stack>
+          </Container>
+        </Section>
+      </div>
     );
   }
 
   return (
-    <Box sx={{ minHeight: "100vh", backgroundColor: "background.default" }}>
+    <div className="min-h-screen bg-neutral-50">
       <Navigation />
       <EventsBanner />
-      <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Button
-          component={Link}
-          href="/events"
-          variant="outlined"
-          sx={{ mb: 3 }}
-        >
-          ← Back to Events
-        </Button>
 
-        <Card sx={{ mb: 4 }}>
-          {event.imageUrl && (
-            <CardMedia
-              component="img"
-              height="400"
-              image={event.imageUrl}
-              alt={event.name}
-              sx={{ objectFit: "cover" }}
-            />
-          )}
+      <Section>
+        <Container>
+          <Stack gap="xl">
+            {/* Back Button */}
+            <Link href="/events">
+              <Button variant="outline" size="sm">
+                ← Back to Events
+              </Button>
+            </Link>
 
-          <CardContent sx={{ p: 4 }}>
-            <Typography
-              variant="h3"
-              component="h1"
-              gutterBottom
-              sx={{ fontWeight: "bold" }}
-            >
-              {event.name}
-            </Typography>
-
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 3 }}>
-              <Chip
-                icon={<Bolt />}
-                label={`${event.type} • ${event.distance}`}
-                variant="outlined"
-                color="primary"
-              />
-              {event.isVirtual && (
-                <Chip
-                  icon={<Public />}
-                  label="Virtual Event"
-                  variant="outlined"
-                  color="secondary"
-                />
+            {/* Event Card */}
+            <Card>
+              {/* Event Image */}
+              {event.imageUrl && (
+                <div className="h-96 w-full overflow-hidden bg-neutral-200">
+                  <img
+                    src={event.imageUrl}
+                    alt={event.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
               )}
-            </Box>
 
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: { xs: "column", md: "row" },
-                gap: 4,
-              }}
-            >
-              <Box sx={{ flex: { xs: 1, md: 2 } }}>
-                {event.description && (
-                  <Box sx={{ mb: 4 }}>
-                    <Typography
-                      variant="h5"
-                      gutterBottom
-                      sx={{ fontWeight: "bold" }}
-                    >
-                      About This Event
-                    </Typography>
-                    <Box
-                      sx={{
-                        lineHeight: 1.7,
-                        "& p": { mb: 2 },
-                        "& h1, & h2, & h3, & h4, & h5, & h6": {
-                          fontWeight: "bold",
-                          mt: 3,
-                          mb: 2,
-                          lineHeight: 1.3,
-                        },
-                        "& h1": { fontSize: "2rem" },
-                        "& h2": { fontSize: "1.75rem" },
-                        "& h3": { fontSize: "1.5rem" },
-                        "& h4": { fontSize: "1.25rem" },
-                        "& ul, & ol": { pl: 3, mb: 2 },
-                        "& li": { mb: 1 },
-                        "& a": {
-                          color: "primary.main",
-                          textDecoration: "underline",
-                          "&:hover": { textDecoration: "none" },
-                        },
-                        "& strong, & b": { fontWeight: "bold" },
-                        "& em, & i": { fontStyle: "italic" },
-                        "& blockquote": {
-                          borderLeft: "4px solid",
-                          borderColor: "primary.main",
-                          pl: 2,
-                          py: 1,
-                          my: 2,
-                          bgcolor: "grey.50",
-                          fontStyle: "italic",
-                        },
-                      }}
-                      dangerouslySetInnerHTML={{ __html: event.description }}
-                    />
-                  </Box>
-                )}
+              <CardContent className="py-8">
+                <Stack gap="xl">
+                  {/* Title and Badges */}
+                  <Stack gap="md">
+                    <Heading level="h1" fluid>
+                      {event.name}
+                    </Heading>
+                    <Flex gap="md" className="flex-wrap">
+                      <Badge variant="accent">
+                        {event.type} • {event.distance}
+                      </Badge>
+                      {event.isVirtual && (
+                        <Badge variant="secondary">Virtual Event</Badge>
+                      )}
+                    </Flex>
+                  </Stack>
 
-                <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                    <CalendarToday color="action" />
-                    <Typography variant="body1">
-                      <strong>Date:</strong> {formatEventDate(event.date)}
-                    </Typography>
-                  </Box>
+                  {/* Main Content Grid */}
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {/* Left Column - Description and Details */}
+                    <div className="lg:col-span-2 space-y-8">
+                      {/* About Section */}
+                      {event.description && (
+                        <Stack gap="md">
+                          <Heading level="h3" fluid>
+                            About This Event
+                          </Heading>
+                          <div
+                            className="prose prose-sm max-w-none text-secondary leading-relaxed"
+                            dangerouslySetInnerHTML={{ __html: event.description }}
+                          />
+                        </Stack>
+                      )}
 
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                    <DateRange color="action" />
-                    <Typography variant="body1">
-                      <strong>Time:</strong> {formatEventTime(event.date)}
-                    </Typography>
-                  </Box>
+                      {/* Event Details */}
+                      <Stack gap="md">
+                        <Heading level="h4">Event Details</Heading>
+                        <Stack gap="md" className="space-y-4">
+                          {/* Date */}
+                          <Flex gap="md" align="start">
+                            <span className="text-lg">📅</span>
+                            <Stack gap="xs">
+                              <Text weight="semibold">Date</Text>
+                              <Text color="secondary">
+                                {formatEventDate(event.date)}
+                              </Text>
+                            </Stack>
+                          </Flex>
 
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                    <LocationOn color="action" />
-                    <Typography variant="body1">
-                      <strong>Location:</strong> {event.location}, {event.city},{" "}
-                      {event.state}
-                    </Typography>
-                  </Box>
+                          {/* Time */}
+                          <Flex gap="md" align="start">
+                            <span className="text-lg">🕐</span>
+                            <Stack gap="xs">
+                              <Text weight="semibold">Time</Text>
+                              <Text color="secondary">
+                                {formatEventTime(event.date)}
+                              </Text>
+                            </Stack>
+                          </Flex>
 
-                  {event.price !== null && (
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                      <AttachMoney color="action" />
-                      <Typography variant="body1">
-                        <strong>Price:</strong> ${event.price.toFixed(2)}
-                      </Typography>
-                    </Box>
-                  )}
-                </Box>
-              </Box>
+                          {/* Location */}
+                          <Flex gap="md" align="start">
+                            <span className="text-lg">📍</span>
+                            <Stack gap="xs">
+                              <Text weight="semibold">Location</Text>
+                              <Text color="secondary">
+                                {event.location}, {event.city}, {event.state}
+                              </Text>
+                            </Stack>
+                          </Flex>
 
-              <Box sx={{ flex: { xs: 1, md: 1 } }}>
-                <Card variant="outlined" sx={{ p: 3 }}>
-                  <Typography
-                    variant="h6"
-                    gutterBottom
-                    sx={{ fontWeight: "bold" }}
-                  >
-                    Event Actions
-                  </Typography>
+                          {/* Price */}
+                          {event.price !== null && (
+                            <Flex gap="md" align="start">
+                              <span className="text-lg">💵</span>
+                              <Stack gap="xs">
+                                <Text weight="semibold">Entry Price</Text>
+                                <Text color="secondary">
+                                  ${event.price.toFixed(2)}
+                                </Text>
+                              </Stack>
+                            </Flex>
+                          )}
+                        </Stack>
+                      </Stack>
+                    </div>
 
-                  <Box
-                    sx={{ display: "flex", flexDirection: "column", gap: 2 }}
-                  >
-                    {event.registrationLink && (
-                      <Button
-                        variant="contained"
-                        size="large"
-                        href={event.registrationLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        fullWidth
-                      >
-                        Register Now
-                      </Button>
-                    )}
+                    {/* Right Column - Action Card */}
+                    <div className="lg:col-span-1">
+                      <Card>
+                        <CardHeader>
+                          <Heading level="h5">Event Actions</Heading>
+                        </CardHeader>
+                        <CardContent>
+                          <Stack gap="md">
+                            {event.registrationLink && (
+                              <a
+                                href={event.registrationLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-block w-full"
+                              >
+                                <Button
+                                  variant="primary"
+                                  size="lg"
+                                  className="w-full"
+                                >
+                                  Register Now
+                                </Button>
+                              </a>
+                            )}
 
-                    {event.websiteUrl && (
-                      <Button
-                        variant="outlined"
-                        size="large"
-                        href={event.websiteUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        fullWidth
-                      >
-                        Visit Website
-                      </Button>
-                    )}
+                            {event.websiteUrl && (
+                              <a
+                                href={event.websiteUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-block w-full"
+                              >
+                                <Button
+                                  variant="outline"
+                                  size="lg"
+                                  className="w-full"
+                                >
+                                  Visit Website
+                                </Button>
+                              </a>
+                            )}
 
-                    {!event.registrationLink && !event.websiteUrl && (
-                      <Typography variant="body2" color="text.secondary">
-                        Registration information not available
-                      </Typography>
-                    )}
-                  </Box>
-                </Card>
-              </Box>
-            </Box>
-          </CardContent>
-        </Card>
-      </Container>
-    </Box>
+                            {!event.registrationLink && !event.websiteUrl && (
+                              <Text size="sm" color="muted">
+                                Registration information not available
+                              </Text>
+                            )}
+                          </Stack>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </div>
+                </Stack>
+              </CardContent>
+            </Card>
+          </Stack>
+        </Container>
+      </Section>
+    </div>
   );
 }

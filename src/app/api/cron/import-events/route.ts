@@ -21,7 +21,7 @@ export async function GET(request: Request) {
     }
 
     const eventDataService = new EventDataService();
-    const result = await eventDataService.importEventsToDatabase();
+    const result = await eventDataService.importAllEvents();
 
     return NextResponse.json({
       success: true,
