@@ -59,7 +59,7 @@ export default function HomePage() {
               {/* Active Events - Large Featured Card */}
               <Card
                 interactive
-                className="md:col-span-8 bg-gradient-to-br from-accent/10 to-neutral-50"
+                className="md:col-span-8 bg-gradient-to-br from-accent-light/40 to-neutral-50"
               >
                 <CardContent className="py-8 md:py-12 rounded-t-lg rounded-b-lg">
                   <Stack gap="md">
@@ -80,7 +80,7 @@ export default function HomePage() {
               {/* Cities Card - Tall */}
               <Card
                 interactive
-                className="md:col-span-4 md:row-span-2 bg-gradient-to-br from-primary/10 to-neutral-50"
+                className="md:col-span-4 md:row-span-2 bg-gradient-to-br from-primary-light/40 to-neutral-50"
               >
                 <CardContent className="py-8 text-center rounded-t-lg rounded-b-lg">
                   <Stack gap="lg" className="items-center">
@@ -161,7 +161,7 @@ export default function HomePage() {
               {/* All Distances Card - Wide */}
               <Card
                 interactive
-                className="md:col-span-5 bg-gradient-to-br from-success/10 to-neutral-50"
+                className="md:col-span-5 bg-gradient-to-br from-secondary-light/40 to-neutral-50"
               >
                 <CardContent className="py-8 rounded-t-lg rounded-b-lg">
                   <Stack gap="lg">
@@ -208,7 +208,7 @@ export default function HomePage() {
               {/* Live Updates Card */}
               <Card
                 interactive
-                className="md:col-span-3 bg-gradient-to-br from-info/10 to-neutral-50"
+                className="md:col-span-3 bg-gradient-to-br from-tertiary-light/40 to-neutral-50"
               >
                 <CardContent className="py-8 rounded-t-lg rounded-b-lg">
                   <Stack gap="lg">
