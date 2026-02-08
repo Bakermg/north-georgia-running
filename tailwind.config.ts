@@ -44,6 +44,7 @@ export default {
         /* Neutrals */
         neutral: {
           "50": "var(--color-neutral-50)",
+          "75": "var(--color-neutral-75)",
           "100": "var(--color-neutral-100)",
           "200": "var(--color-neutral-200)",
           "300": "var(--color-neutral-300)",
