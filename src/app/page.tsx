@@ -171,7 +171,7 @@ export default function HomePage() {
         <Container>
           <Stack gap="xl" className="max-w-3xl mx-auto text-center">
             <Heading level="h2" fluid>
-              Experience the Mountains
+              Experience
             </Heading>
             <Stack gap="md">
               <Paragraph size="lg" color="secondary" fluid>
