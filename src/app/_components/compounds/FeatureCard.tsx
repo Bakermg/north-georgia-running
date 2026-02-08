@@ -49,8 +49,8 @@ export const FeatureCard = React.forwardRef<HTMLDivElement, FeatureCardProps>(
       "tertiary",
     ];
     const selectedColor: "accent" | "primary" | "secondary" | "tertiary" =
-      gradientColor === "random"
-        ? colorOptions[Math.floor(Math.random() * colorOptions.length)]
+      gradientColor === "random" || !gradientColor
+        ? colorOptions[Math.floor(Math.random() * colorOptions.length)]!
         : (gradientColor as "accent" | "primary" | "secondary" | "tertiary");
 
     const isLargeValue = value !== undefined && value !== null;
