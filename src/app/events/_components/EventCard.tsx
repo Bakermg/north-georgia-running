@@ -59,7 +59,7 @@ export default function EventCard({ event, isRegistered, onToggle }: EventCardPr
     >
       <Card interactive>
         {/* Image Section */}
-        <div className="h-48 w-full bg-gradient-to-br from-primary/10 to-accent/10 overflow-hidden flex items-center justify-center relative group">
+        <div className="h-48 w-full bg-gradient-to-br from-primary/10 to-accent/10 overflow-hidden flex items-center justify-center relative group rounded-t-lg">
           {event.imageUrl ? (
             <img
               src={event.imageUrl}
