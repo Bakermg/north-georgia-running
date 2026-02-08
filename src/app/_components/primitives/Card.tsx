@@ -68,7 +68,7 @@ interface CardContentProps extends React.HTMLAttributes<HTMLDivElement> {
 export const CardContent = React.forwardRef<HTMLDivElement, CardContentProps>(
   ({ children, className = "", ...props }, ref) => {
     return (
-      <div ref={ref} className={`px-6 py-4 ${className}`} {...props}>
+      <div ref={ref} className={`px-6 py-4 bg-neutral-75 ${className}`} {...props}>
         {children}
       </div>
     );
