@@ -62,7 +62,7 @@ export default function HomePage() {
                 className="md:col-span-8"
                 style={{ background: "linear-gradient(to bottom right, rgba(245, 173, 114, 0.3), rgb(250, 248, 246)) !important" }}
               >
-                <CardContent className="py-8 md:py-12 rounded-t-lg rounded-b-lg">
+                <CardContent className="py-8 md:py-12 rounded-t-lg rounded-b-lg bg-transparent">
                   <Stack gap="md">
                     <Text size="xs" color="muted" weight="semibold">
                       FEATURED
@@ -84,7 +84,7 @@ export default function HomePage() {
                 className="md:col-span-4 md:row-span-2"
                 style={{ background: "linear-gradient(to bottom right, rgba(217, 119, 87, 0.3), rgb(250, 248, 246)) !important" }}
               >
-                <CardContent className="py-8 text-center rounded-t-lg rounded-b-lg">
+                <CardContent className="py-8 text-center rounded-t-lg rounded-b-lg bg-transparent">
                   <Stack gap="lg" className="items-center">
                     <div className="w-20 h-20 mx-auto bg-neutral-200 rounded-lg flex items-center justify-center">
                       <svg
@@ -166,7 +166,7 @@ export default function HomePage() {
                 className="md:col-span-5"
                 style={{ background: "linear-gradient(to bottom right, rgba(155, 149, 144, 0.3), rgb(250, 248, 246)) !important" }}
               >
-                <CardContent className="py-8 rounded-t-lg rounded-b-lg">
+                <CardContent className="py-8 rounded-t-lg rounded-b-lg bg-transparent">
                   <Stack gap="lg">
                     <div className="w-16 h-16 bg-neutral-200 rounded-lg flex items-center justify-center">
                       <svg
@@ -214,7 +214,7 @@ export default function HomePage() {
                 className="md:col-span-3"
                 style={{ background: "linear-gradient(to bottom right, rgba(181, 173, 130, 0.3), rgb(250, 248, 246)) !important" }}
               >
-                <CardContent className="py-8 rounded-t-lg rounded-b-lg">
+                <CardContent className="py-8 rounded-t-lg rounded-b-lg bg-transparent">
                   <Stack gap="lg">
                     <div className="w-16 h-16 bg-neutral-200 rounded-lg flex items-center justify-center">
                       <svg
