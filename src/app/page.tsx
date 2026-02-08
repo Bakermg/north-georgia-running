@@ -46,7 +46,7 @@ export default function HomePage() {
             {/* Hero Text */}
             <Stack gap="lg" className="text-center">
               <Heading level="h2" fluid>
-                Discover North Georgia Running
+                Discover
               </Heading>
               <Paragraph color="secondary" fluid className="max-w-2xl mx-auto">
                 Find your next running adventure in the beautiful mountains and
