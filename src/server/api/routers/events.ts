@@ -28,6 +28,8 @@ export const eventRouter = createTRPCRouter({
           { source: "runsignup" }, // Show all RunSignUp events (auto-approved)
           { source: "atlanta_track_club" }, // Show Atlanta Track Club events
           { source: "active_com" }, // Show Active.com events
+          { source: "ultrarunning" }, // Show UltraRunning.com events
+          { source: "runningintheuasa" }, // Show RunningInTheUSA.com events
         ],
       };
 
@@ -121,6 +123,8 @@ export const eventRouter = createTRPCRouter({
           { source: "runsignup" }, // Show all RunSignUp events (auto-approved)
           { source: "atlanta_track_club" }, // Show Atlanta Track Club events
           { source: "active_com" }, // Show Active.com events
+          { source: "ultrarunning" }, // Show UltraRunning.com events
+          { source: "runningintheuasa" }, // Show RunningInTheUSA.com events
         ],
       };
 
@@ -190,7 +194,13 @@ export const eventRouter = createTRPCRouter({
 
       // Only show approved events to regular users
       // Allow: approved manual submissions OR all trusted source events
-      const trustedSources = ["runsignup", "atlanta_track_club", "active_com"];
+      const trustedSources = [
+        "runsignup",
+        "atlanta_track_club",
+        "active_com",
+        "ultrarunning",
+        "runningintheuasa",
+      ];
       if (!event.isApproved && !trustedSources.includes(event.source ?? "")) {
         throw new Error("This event is not yet available");
       }

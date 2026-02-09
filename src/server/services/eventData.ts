@@ -2,6 +2,7 @@
 import { db } from "~/server/db";
 import { AtlantaTrackClubService } from "./atlantaTrackClub";
 import { ActiveApiService } from "./activeApi";
+import { AutomaticEventDiscoveryService, type DiscoveryResult } from "./automaticEventDiscovery";
 
 export interface RunSignUpEvent {
   race_id: number;
@@ -150,6 +151,7 @@ export class EventDataService {
   private readonly BASE_URL = "https://runsignup.com/Rest/races";
   private readonly atcService = new AtlantaTrackClubService();
   private readonly activeService = new ActiveApiService();
+  private readonly discoveryService = new AutomaticEventDiscoveryService();
 
   async fetchGeorgiaRaces(): Promise<RunSignUpEvent[]> {
     try {
@@ -379,6 +381,8 @@ export class EventDataService {
     runsignup: { imported: number; duplicates: number };
     atc: { imported: number; duplicates: number };
     active: { imported: number; duplicates: number };
+    ultrarunning: DiscoveryResult;
+    runningInTheUSA: DiscoveryResult;
     total: { imported: number; duplicates: number };
   }> {
     console.log("Starting event import from all sources...");
@@ -398,14 +402,37 @@ export class EventDataService {
     const active = await this.activeService.importEventsToDatabase();
     console.log(`Active.com: ${active.imported} imported, ${active.duplicates} duplicates`);
 
+    // Discover and import from automated sources
+    console.log("Discovering events from UltraRunning.com and RunningInTheUSA.com...");
+    const discovery = await this.discoveryService.discoverAndImportEvents();
+    console.log(`UltraRunning: ${discovery.ultrarunning.imported} imported, ${discovery.ultrarunning.duplicates} duplicates`);
+    console.log(`RunningInTheUSA: ${discovery.runningInTheUSA.imported} imported, ${discovery.runningInTheUSA.duplicates} duplicates`);
+
     const total = {
-      imported: runsignup.imported + atc.imported + active.imported,
-      duplicates: runsignup.duplicates + atc.duplicates + active.duplicates,
+      imported:
+        runsignup.imported +
+        atc.imported +
+        active.imported +
+        discovery.ultrarunning.imported +
+        discovery.runningInTheUSA.imported,
+      duplicates:
+        runsignup.duplicates +
+        atc.duplicates +
+        active.duplicates +
+        discovery.ultrarunning.duplicates +
+        discovery.runningInTheUSA.duplicates,
     };
 
     console.log(`Total: ${total.imported} imported, ${total.duplicates} duplicates`);
 
-    return { runsignup, atc, active, total };
+    return {
+      runsignup,
+      atc,
+      active,
+      ultrarunning: discovery.ultrarunning,
+      runningInTheUSA: discovery.runningInTheUSA,
+      total,
+    };
   }
 
   /**

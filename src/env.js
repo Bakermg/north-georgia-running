@@ -13,6 +13,8 @@ export const env = createEnv({
     DATABASE_URL: z.string().url(),
     NODE_ENV: z.enum(["development", "test", "production"]),
     ACTIVE_API_KEY: z.string().optional(), // Active.com API key for event scraping
+    BRAVE_SEARCH_API_KEY: z.string().optional(), // Brave Search API key for race discovery
+    CRON_SECRET: z.string().optional(), // Secret token for securing cron endpoints
   },
 
   /**
@@ -35,6 +37,8 @@ export const env = createEnv({
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
     ACTIVE_API_KEY: process.env.ACTIVE_API_KEY,
+    BRAVE_SEARCH_API_KEY: process.env.BRAVE_SEARCH_API_KEY,
+    CRON_SECRET: process.env.CRON_SECRET,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
